@@ -1,0 +1,14 @@
+# Ignore preprocessed data
+*.target
+*.source
+SciTLDR-Data/SciTLDR-*-bin/
+SciTLDR-Data/SciTLDR-*/mapping/
+SciTLDR-Data/SciTLDR-*/stories/
+
+# Pycache
+__pycache__/
+
+# Downloads in make_datafiles.sh
+SciTLDR-Data/dict.txt
+SciTLDR-Data/encoder.json
+SciTLDR-Data/vocab.bpe
