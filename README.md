@@ -2,6 +2,33 @@
 
 This repository contains the dataset, model weights, and generation code for our paper "[TLDR: Extreme Summarization of Scientific Documents](https://arxiv.org/abs/2004.15011)". 
 
+## Dataset
+SciTLDR is split in to a 60/20/20 train/dev/test split. For the `test.jsonl` files, each line is a json, formatted as follows
+
+```
+{
+   "source":[
+      "sent0",
+      "sent1",
+      "sent2",
+      ...
+   ],
+   "source_labels":[binary list in which 1 is the oracle sentence],
+   "rouge_scores":[precomputed rouge-1 scores],
+   "paper_id":"PAPER-ID",
+   "target":[
+     "author-tldr",
+      "pr-tldr0",
+      "pr-tldr1",
+      ... 
+   ],
+   "title":"TITLE"
+}
+```
+The keys `rouge_scores` and `source_labels` are not necessary for any code to run, but we provide precomputed Rouge scores to encourage future research. 
+
+The train and dev files have the same format, but the value for `target` is a string, because those splits only have Author-TLDRs.
+
 ## Demo
 A running demo of our model can be found [here](https://scitldr.apps.allenai.org).
 
@@ -29,7 +56,7 @@ $ ./make_datafiles.sh # BPE preprocess
 ### Evaluation
 This code takes in a `test.source` file, in which each line is an input and outputs a `test.hypo` file with the predictions. It imports a `test.jsonl` file as a reference and stores the rouge score in `test.hypo.score`.
 ```
-$ python evaluate.py SciTLDR-Data/SciTLDR-A /path/to/model/dir/ --checkpoint_file scitldr_ao_model.pt --beam 4 --lenpen 0.6
+$ python evaluate.py SciTLDR-Data/SciTLDR-A /path/to/model/dir/ --checkpoint_file scitldr_ao_model.pt --beam 4 --lenpen 0.2
 
 OR
 
