@@ -136,12 +136,11 @@ def evaluate(bart, bsz, count, datadir, outdir, decoder_params,
             for hypothesis in hypotheses_batch:
                 fout.write(hypothesis.replace('\n', ' ') + '\n')
                 fout.flush()
-    ref_fname = 'test-multitarget.jsonl' 
+    ref_fname = 'test.jsonl' 
     ref_fname = os.path.join(datadir, ref_fname)
     r = test_rouge(pred_fname, 
                     ref_fname, 
-                    outpath=os.path.join(outdir, test_fname + '.rouge'),
-                    multitarget=multitarget, quick=quick)
+                    outpath=os.path.join(outdir, test_fname + '.rouge'))
 
     return r
 
