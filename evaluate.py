@@ -111,6 +111,7 @@ def evaluate(bart, bsz, count, datadir, outdir, decoder_params,
     pred_fname = os.path.join(outdir, test_fname)
     with open(source_fname, encoding="utf-8") as source, open(pred_fname, 'w', encoding="utf-8") as fout:
         sline = source.readline().strip()
+        # sline = f'{sline} {decoder_params["ctrl"]} .'
         slines = [sline]
         for sline in tqdm(source):
             if count % bsz == 0:
@@ -162,6 +163,7 @@ if __name__=='__main__':
                         help='flag if you want to print as percentages')
 
     # Decoder params
+    # parser.add_argument('--ctrl', default='<|TLDR|>')
     parser.add_argument('--count', default=1, type=int)
     parser.add_argument('--batch_size', '--bsz', default=32, type=int, dest='bsz')
     parser.add_argument('--test_fname', default='test.hypo')
@@ -180,7 +182,7 @@ if __name__=='__main__':
     if not os.path.exists(join(args.datadir, 'test.source')):
         print(f'{join(args.datadir, "test.source")} does not exist')
         exit(0)
-    if (not os.path.exists(join(args.checkpoint_dir, args.checkpoint_file))) and (not args.rouge_only):
+    if (not os.path.exists(join(args.checkpoint_dir, args.checkpoint_file))):
         print(f'{join(args.checkpoint_dir, args.checkpoint_file)} does not exist')
         exit(0)
 
@@ -200,6 +202,7 @@ if __name__=='__main__':
     )
 
     decoder_params ={
+        # 'ctrl': args.ctrl,
         'beam': args.beam,
         'lenpen': args.lenpen,
         'max_len_b': args.max_len_b,

@@ -45,22 +45,22 @@ Please install [my fork](https://github.com/isabelcachola/files2rouge) of the re
 
 ### Data Preprocessing
 In order to format the data to work for the Fairseq library, run:
+```bash
+cd SciTLDR-Data
+export TASK=SciTLDR-A # Choose from {A, AIC, FullText}
+chmod +x make_datafiles.sh
+./make_datafiles.sh # BPE preprocess
 ```
-$ cd SciTLDR-Data
-$ export TASK=SciTLDR-A # Choose from {A, AIC, FullText}
-$ python to_stories.py $TASK # Convert to story format
-$ chmod +x make_datafiles.sh
-$ ./make_datafiles.sh # BPE preprocess
-```
+`$TASK/ctrl` contains the dataset formatted with the control codes.
 
 ### Evaluation
 This code takes in a `test.source` file, in which each line is an input and outputs a `test.hypo` file with the predictions. It imports a `test.jsonl` file as a reference and stores the rouge score in `test.hypo.score`.
+```bash
+python evaluate.py SciTLDR-Data/SciTLDR-A/ctrl /path/to/model/dir/ --checkpoint_file scitldr_ao_model.pt --beam 4 --lenpen 0.2
 ```
-$ python evaluate.py SciTLDR-Data/SciTLDR-A /path/to/model/dir/ --checkpoint_file scitldr_ao_model.pt --beam 4 --lenpen 0.2
-
 OR
-
-$ python evaluate.py SciTLDR-Data/SciTLDR-AIC /path/to/model/dir/ --checkpoint_file scitldr_aic_model.pt --beam 2 --lenpen 0.2 
+```bas
+python evaluate.py SciTLDR-Data/SciTLDR-AIC/ctrl /path/to/model/dir/ --checkpoint_file scitldr_aic_model.pt --beam 2 --lenpen 0.2 
 ```
 
 ### Citing

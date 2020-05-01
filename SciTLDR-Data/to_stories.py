@@ -21,7 +21,7 @@ def format_story(data):
 
     j["paper_id"] = str(j["paper_id"]).replace('/', '')
 
-    with open(join(args.out_dir, 'stories', f'{j["paper_id"]}.story'), 'w') as f:
+    with open(join(args.out_dir, 'stories', f'{j["paper_id"]}.story'), 'w', encoding='utf-8') as f:
         f.write(story)
         f.write(summary)
 

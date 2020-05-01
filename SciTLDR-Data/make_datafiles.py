@@ -100,28 +100,20 @@ def write_to_bin(url_file, stories_dir, out_prefix):
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--stories_dir', default='url_lists')
-  parser.add_argument('--urldir', default='url_lists')
+  parser.add_argument('--urldir', default='mapping')
   parser.add_argument('--finished_files_dir', default='data')
   
   args = parser.parse_args()
 
-  all_train_urls = os.path.join(args.urldir, "all_train.txt")
-  all_val_urls = os.path.join(args.urldir, "all_val.txt")
-  all_test_urls = os.path.join(args.urldir, "all_test.txt")
-
-  if not os.path.exists(all_test_urls):
-    all_test_urls = re.sub('all', 'mapping', all_test_urls)
-    all_val_urls = re.sub('all', 'mapping', all_val_urls)
-    all_val_urls = re.sub('val', 'valid', all_val_urls)
-    all_train_urls = re.sub('all', 'mapping', all_train_urls)
+  all_train_urls = os.path.join(args.urldir, "mapping_train.txt")
+  all_val_urls = os.path.join(args.urldir, "mapping_valid.txt")
+  all_test_urls = os.path.join(args.urldir, "mapping_test.txt")
 
   # Create some new directories
-  if not os.path.exists(args.finished_files_dir): os.makedirs(args.finished_files_dir)
+  if not os.path.exists(args.finished_files_dir): 
+    os.makedirs(args.finished_files_dir)
 
   # Read the stories, do a little postprocessing then write to bin files
-  if os.path.exists(all_test_urls):
-    write_to_bin(all_test_urls, args.stories_dir, os.path.join(args.finished_files_dir, "test"))
-  if os.path.exists(all_val_urls):
-    write_to_bin(all_val_urls, args.stories_dir, os.path.join(args.finished_files_dir, "val"))
-  if os.path.exists(all_train_urls):
-    write_to_bin(all_train_urls, args.stories_dir, os.path.join(args.finished_files_dir, "train"))
+  write_to_bin(all_test_urls, args.stories_dir, os.path.join(args.finished_files_dir, "test"))
+  write_to_bin(all_val_urls, args.stories_dir, os.path.join(args.finished_files_dir, "val"))
+  write_to_bin(all_train_urls, args.stories_dir, os.path.join(args.finished_files_dir, "train"))
