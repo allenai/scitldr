@@ -6,7 +6,7 @@ This repository contains the dataset, model weights, and generation code for our
 A running demo of our model can be found [here](https://scitldr.apps.allenai.org).
 
 ## Dataset
-SciTLDR is split in to a 60/20/20 train/dev/test split. For the `test.jsonl` files, each line is a json, formatted as follows
+SciTLDR is split in to a 60/20/20 train/dev/test split. For each file, each line is a json, formatted as follows
 
 ```
 {
@@ -21,7 +21,7 @@ SciTLDR is split in to a 60/20/20 train/dev/test split. For the `test.jsonl` fil
    "paper_id":"PAPER-ID",
    "target":[
      "author-tldr",
-      "pr-tldr0",
+      "pr-tldr0", 
       "pr-tldr1",
       ... 
    ],
@@ -30,10 +30,16 @@ SciTLDR is split in to a 60/20/20 train/dev/test split. For the `test.jsonl` fil
 ```
 The keys `rouge_scores` and `source_labels` are not necessary for any code to run, but we provide precomputed Rouge scores to encourage future research. 
 
-The train and dev files have the same format, but the value for `target` is a string, because those splits only have Author-TLDRs.
-
 ## Requirements
-We use [Fairseq](https://fairseq.readthedocs.io) to train and evaluate our models. To install all requirements, run `pip install -r requirements.txt`
+We use [Fairseq](https://fairseq.readthedocs.io) to train and evaluate our models. 
+Install Fairseq as follows:
+```bash
+git clone fairseq repo #TODO figure out how to use specific version
+cd fairseq
+pip install --editable .
+```
+
+To install all other requirements, run `pip install -r requirements.txt`
 
 For the evaluation, you will need `files2rouge`. 
 Please install [my fork](https://github.com/isabelcachola/files2rouge) of the repo.
