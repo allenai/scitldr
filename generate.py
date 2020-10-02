@@ -1,39 +1,38 @@
 import torch
 from fairseq.models.bart import BARTModel
 import argparse
-from pprint import pprint
 from tqdm import tqdm
 import os
 from os.path import join
-import shutil
 import logging
-import numpy as np
-import json 
-import random
-import string
-import files2rouge
 import time
 
-def generate_TLDRs(bart, bsz, count, datadir, outdir, decoder_params,
-            test_fname='test.hypo', multitarget=False, quick=False):
+def generate_TLDRs(bsz, count, datadir, outdir, 
+                    checkpoint_dir, checkpoint_file, test_fname,
+                    beam, lenpen, max_len_b, min_len, no_repeat_ngram_size):
+    bart = BARTModel.from_pretrained(
+        checkpoint_dir,
+        checkpoint_file=checkpoint_file,
+        data_name_or_path=datadir + '-bin',
+        task='translation'
+    )
     if torch.cuda.is_available():
         bart.cuda()
         bart.half()
     bart.eval()
-    source_fname = os.path.join(datadir, 'test.source')
-    pred_fname = os.path.join(outdir, test_fname)
+    source_fname = join(datadir, 'test.source')
+    pred_fname = join(outdir, test_fname)
     with open(source_fname, encoding="utf-8") as source, open(pred_fname, 'w', encoding="utf-8") as fout:
         sline = source.readline().strip()
-        # sline = f'{sline} {decoder_params["ctrl"]} .'
         slines = [sline]
         for sline in tqdm(source):
             if count % bsz == 0:
                 with torch.no_grad():
-                    hypotheses_batch = bart.sample(slines, beam=decoder_params['beam'], 
-                                                    lenpen=decoder_params['lenpen'], 
-                                                    max_len_b=decoder_params['max_len_b'],
-                                                    min_len=decoder_params['min_len'],
-                                                    no_repeat_ngram_size=decoder_params['no_repeat_ngram_size'])
+                    hypotheses_batch = bart.sample(slines, beam=beam, 
+                                                    lenpen=lenpen, 
+                                                    max_len_b=max_len_b,
+                                                    min_len=min_len,
+                                                    no_repeat_ngram_size=no_repeat_ngram_size)
                 for hypothesis in hypotheses_batch:
                     fout.write(hypothesis + '\n')
                     fout.flush()
@@ -42,11 +41,11 @@ def generate_TLDRs(bart, bsz, count, datadir, outdir, decoder_params,
             slines.append(sline.strip())
             count += 1
         if slines != []:
-            hypotheses_batch = bart.sample(slines, beam=decoder_params['beam'], 
-                                                    lenpen=decoder_params['lenpen'], 
-                                                    max_len_b=decoder_params['max_len_b'],
-                                                    min_len=decoder_params['min_len'],
-                                                    no_repeat_ngram_size=decoder_params['no_repeat_ngram_size'])
+            hypotheses_batch = bart.sample(slines, beam=beam, 
+                                                lenpen=lenpen, 
+                                                max_len_b=max_len_b,
+                                                min_len=min_len,
+                                                no_repeat_ngram_size=no_repeat_ngram_size)
             for hypothesis in hypotheses_batch:
                 fout.write(hypothesis.replace('\n', ' ') + '\n')
                 fout.flush()
@@ -61,6 +60,7 @@ def maybe_percentages(r, percentages):
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
+    
     parser.add_argument('checkpoint_dir', help='Path to checkpoint directory')
     parser.add_argument('datadir', help='Path to data directory')
     parser.add_argument('outdir', help='Path to output directory')
@@ -78,6 +78,7 @@ if __name__=='__main__':
     args = parser.parse_args()
 
     start = time.time()
+    
     #### Path checks
     if not os.path.exists(args.datadir):
         print(f'{args.datadir} does not exist')
@@ -95,27 +96,7 @@ if __name__=='__main__':
     if args.datadir.endswith('/'):
         args.datadir = args.datadir[:-1]
 
-    bart = BARTModel.from_pretrained(
-        args.checkpoint_dir,
-        checkpoint_file=args.checkpoint_file,
-        data_name_or_path=args.datadir + '-bin',
-        task='translation'
-    )
-
-    decoder_params ={
-        'beam': args.beam,
-        'lenpen': args.lenpen,
-        'max_len_b': args.max_len_b,
-        'min_len': args.min_len, 
-        'no_repeat_ngram_size': args.no_repeat_ngram_size
-    }
-
-    generate_TLDRs(bart, args.bsz, args.count, 
-            args.datadir, args.outdir, 
-            decoder_params, 
-            test_fname=args.test_fname
-            )
+    generate_TLDRs(**vars(args))
     
-
     end = time.time()
     print(f'Time to run script: {(end-start)} sec')

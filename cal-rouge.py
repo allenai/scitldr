@@ -18,16 +18,30 @@ from collections import defaultdict
 import pandas as pd
 import glob
 import pathlib
-
+import re
 from multiprocessing.pool import Pool
 
 
-def filter_rouge(rouge):
-    res = {}
-    for k, v in rouge.items():
-        if 'f_score' in k:
-            res[k] = v
-    return res
+def filter_rouge(output_string):
+    reg = "ROUGE-(1|2|L) Average_(R|P|F): (\d.\d+)"
+    lines = output_string.split('\n')
+    _j = {}
+    for l in lines:
+        if re.search(reg, l):
+            match = re.search(reg, l)
+            r_type = f'rouge-{match.group(1)}'.lower() # {1,2,L}
+            m_type = match.group(2).lower() # {R, P, F}
+            value = eval(match.group(3))
+            # import ipdb; ipdb.set_trace()
+            if r_type not in _j:
+                _j[r_type] = {}
+            elif 'f' == m_type:
+                _j[r_type] = value
+    # res = {}
+    # for k, v in rouge.items():
+    #     if 'f_score' in k:
+    #         res[k] = v
+    return _j
 
 def get_rouge(args):
     return _get_rouge(args['pred'], args['data'])
@@ -56,12 +70,13 @@ def _get_rouge(pred, data):
                 fh.write(gold_tldr.strip())
             rouge_score = files2rouge.run(cand_file, gold_file, ignore_empty=True)
             rouge_score = filter_rouge(rouge_score)
-            if max_curr_rouge < rouge_score['rouge_1_f_score']:
+            # import ipdb; ipdb.set_trace()
+            if max_curr_rouge < rouge_score['rouge-1']:
                 curr_rouge = rouge_score
-                max_curr_rouge = rouge_score['rouge_1_f_score']
+                max_curr_rouge = rouge_score['rouge-1']
             if i == 0:
                 rouge_author_score = rouge_score
-                author_rouge_f1 = rouge_score['rouge_1_f_score']
+                author_rouge_f1 = rouge_score['rouge-1']
             for k, v in rouge_score.items():
                 rouge_multi_mean[k].append(v)
     for k, v in rouge_multi_mean.items():
@@ -89,15 +104,15 @@ def process(gold_file, candidate_file, method_name, args):
     
     count_diff = 0
     for e1, e2, e3 in results:
-        if e1['rouge_1_f_score'] != e2['rouge_1_f_score']:
+        if e1['rouge-1'] != e2['rouge-1']:
             count_diff += 1
     print(count_diff, len(results))
 
-    df_author = pd.DataFrame([e[0] for e in results], columns=['rouge_1_f_score', 'rouge_2_f_score', 'rouge_l_f_score'])
-    df_multi_max = pd.DataFrame([e[1] for e in results], columns=['rouge_1_f_score', 'rouge_2_f_score', 'rouge_l_f_score'])
-    df_multi_mean = pd.DataFrame([e[2] for e in results], columns=['rouge_1_f_score', 'rouge_2_f_score', 'rouge_l_f_score'])
+    df_author = pd.DataFrame([e[0] for e in results], columns=['rouge-1', 'rouge-2', 'rouge-l'])
+    df_multi_max = pd.DataFrame([e[1] for e in results], columns=['rouge-1', 'rouge-2', 'rouge-l'])
+    df_multi_mean = pd.DataFrame([e[2] for e in results], columns=['rouge-1', 'rouge-2', 'rouge-l'])
 
-    columns = ['rouge_1_f_score', 'rouge_2_f_score', 'rouge_l_f_score']
+    columns = ['rouge-1', 'rouge-2', 'rouge-l']
     all_dfs = pd.DataFrame()
     for metric_type, df in zip(['author', 'multi-max', 'multi-mean'], (df_author, df_multi_max, df_multi_mean)):
         new_columns = [f'R1||{metric_type}||{method_name}', f'R2||{metric_type}||{method_name}', f'RL||{metric_type}||{method_name}']
@@ -134,8 +149,9 @@ def main():
     else:        
         all_dfs = process(args.gold, args.candidate, args.candidate.split('/')[-1], args)
         print(all_dfs.mean())
-    pathlib.Path(args.output).parent.mkdir(parents=True, exist_ok=True)
-    all_dfs.to_csv(args.output)
+    if args.output:
+        pathlib.Path(args.output).parent.mkdir(parents=True, exist_ok=True)
+        all_dfs.to_csv(args.output)
 
 
 if __name__ == '__main__':

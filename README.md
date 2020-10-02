@@ -45,9 +45,15 @@ For the evaluation, you will need `files2rouge`.
 Please install [my fork](https://github.com/isabelcachola/files2rouge) of the repo.
 
 ### Model Weights
-[`bart.large.xsum.multitask-A`](https://storage.cloud.google.com/skiff-models/scitldr/ao_model.pt)
+[`catts.tldr-ao`](https://storage.cloud.google.com/skiff-models/scitldr/catts.tldr-ao.pt)
+[`catts.tldr-aic`](https://storage.cloud.google.com/skiff-models/scitldr/catts.tldr-aic.pt)
+[`catts-xsum.tldr-ao`](https://storage.cloud.google.com/skiff-models/scitldr/catts-xsum.tldr-ao.pt)
+[`catts-xsum.tldr-aic`](https://storage.cloud.google.com/skiff-models/scitldr/catts-xsum.tldr-aic.pt)
+[`bart.tldr-ao`](https://storage.cloud.google.com/skiff-models/scitldr/bart.tldr-ao.pt)
+[`bart.tldr-aic`](https://storage.cloud.google.com/skiff-models/scitldr/bart.tldr-aic.pt)
+[`bart-xsum.tldr-ao`](https://storage.cloud.google.com/skiff-models/scitldr/bart-xsum.tldr-ao.pt)
+[`bart-xsum.tldr-aic`](https://storage.cloud.google.com/skiff-models/scitldr/bart-xsum.tldr-aic.pt)
 
-[`bart.large.xsum.multitask-AIC`](https://storage.cloud.google.com/skiff-models/scitldr/aic_model.pt)
 
 ### Data Preprocessing
 In order to format the data to work for the Fairseq library, run:
@@ -59,20 +65,22 @@ chmod +x make_datafiles.sh
 ```
 `$TASK/ctrl` contains the dataset formatted with the control codes.
 
-### Evaluation
-This code takes in a `test.source` file, in which each line is an input and outputs a `test.hypo` file with the predictions. It imports a `test.jsonl` file as a reference and stores the rouge score in `test.hypo.score`.
+### Generation
+This code takes in a `test.source` file, in which each line is an input and outputs a `test.hypo` file with the predictions. See [decoder_params](decoder_params.md) for optimal decoder parameters for each version of the model.
 ```bash
-python evaluate.py SciTLDR-Data/SciTLDR-A/ctrl /path/to/model/dir/ --checkpoint_file scitldr_ao_model.pt --beam 4 --lenpen 0.2
+python generate.py /path/to/modeldir/ SciTLDR-Data/SciTLDR-A/ctrl ./ --beam 2 --lenpen 0.4 --test_fname test.hypo
 ```
-OR
-```bas
-python evaluate.py SciTLDR-Data/SciTLDR-AIC/ctrl /path/to/model/dir/ --checkpoint_file scitldr_aic_model.pt --beam 2 --lenpen 0.2 
+
+### Evaluation
+This script is a wrapper around ROUGE that takes in a `test.hypo` file and compares to a `test.jsonl` file.
+```bash
+python cal-rouge.py /path/to/test.hypo SciTLDR-Data/SciTLDR-A/test.jsonl --workers 1
 ```
 
 ### Citing
 If you use our code, dataset, or model weights in your research, please cite "TLDR: Extreme Summarization of Scientific Documents."
 
-
+## Replicating results
 ```
 @article{cachola2020tldr,
   title={{TLDR}: Extreme Summarization of Scientific Documents},
