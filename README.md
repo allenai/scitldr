@@ -42,7 +42,7 @@ pip install --editable .
 To install all other requirements, run `pip install -r requirements.txt`
 
 For the evaluation, you will need `files2rouge`. 
-Please install [my fork](https://github.com/isabelcachola/files2rouge) of the repo.
+Please follow the instillation instructions [here](https://github.com/pltrdy/files2rouge).
 
 ### Model Weights
 [`catts.tldr-ao`](https://storage.cloud.google.com/skiff-models/scitldr/catts.tldr-ao.pt)
@@ -80,7 +80,6 @@ python cal-rouge.py /path/to/test.hypo SciTLDR-Data/SciTLDR-A/test.jsonl --worke
 ### Citing
 If you use our code, dataset, or model weights in your research, please cite "TLDR: Extreme Summarization of Scientific Documents."
 
-## Replicating results
 ```
 @article{cachola2020tldr,
   title={{TLDR}: Extreme Summarization of Scientific Documents},
