@@ -42,7 +42,7 @@ pip install --editable .
 To install all other requirements, run `pip install -r requirements.txt`
 
 For the evaluation, you will need `files2rouge`. 
-Please follow the instillation instructions [here](https://github.com/pltrdy/files2rouge).
+Please follow the installation instructions [here](https://github.com/pltrdy/files2rouge).
 
 ### Model Weights
 [`catts.tldr-ao`](https://storage.cloud.google.com/skiff-models/scitldr/catts.tldr-ao.pt)
