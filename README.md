@@ -75,13 +75,13 @@ chmod +x make_datafiles.sh
 ### Generation
 This code takes in a `test.source` file, in which each line is an input and outputs a `test.hypo` file with the predictions. See [decoder_params](decoder_params.md) for optimal decoder parameters for each version of the model.
 ```bash
-python generate.py /path/to/modeldir/ SciTLDR-Data/SciTLDR-A/ctrl ./ --beam 2 --lenpen 0.4 --test_fname test.hypo
+python scripts/generate.py /path/to/modeldir/ SciTLDR-Data/SciTLDR-A/ctrl ./ --beam 2 --lenpen 0.4 --test_fname test.hypo
 ```
 
 ### Evaluation
 This script is a wrapper around ROUGE that takes in a `test.hypo` file and compares to a `test.jsonl` file.
 ```bash
-python cal-rouge.py /path/to/test.hypo SciTLDR-Data/SciTLDR-A/test.jsonl --workers 1
+python scripts/cal-rouge.py /path/to/test.hypo SciTLDR-Data/SciTLDR-A/test.jsonl --workers 1
 ```
 
 ### Citing
