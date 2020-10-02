@@ -46,12 +46,19 @@ Please follow the instillation instructions [here](https://github.com/pltrdy/fil
 
 ### Model Weights
 [`catts.tldr-ao`](https://storage.cloud.google.com/skiff-models/scitldr/catts.tldr-ao.pt)
+
 [`catts.tldr-aic`](https://storage.cloud.google.com/skiff-models/scitldr/catts.tldr-aic.pt)
+
 [`catts-xsum.tldr-ao`](https://storage.cloud.google.com/skiff-models/scitldr/catts-xsum.tldr-ao.pt)
+
 [`catts-xsum.tldr-aic`](https://storage.cloud.google.com/skiff-models/scitldr/catts-xsum.tldr-aic.pt)
+
 [`bart.tldr-ao`](https://storage.cloud.google.com/skiff-models/scitldr/bart.tldr-ao.pt)
+
 [`bart.tldr-aic`](https://storage.cloud.google.com/skiff-models/scitldr/bart.tldr-aic.pt)
+
 [`bart-xsum.tldr-ao`](https://storage.cloud.google.com/skiff-models/scitldr/bart-xsum.tldr-ao.pt)
+
 [`bart-xsum.tldr-aic`](https://storage.cloud.google.com/skiff-models/scitldr/bart-xsum.tldr-aic.pt)
 
 
