@@ -17,7 +17,7 @@ def format_story(data):
     j["paper_id"] = str(j["paper_id"]).replace('/','_')
     j['source'] = [s.replace('\n',' ').strip() for s in j['source']]
     story = "\n\n".join(j['source']) + '\n\n'
-    summary = f'@highlight\n\n{j["target"]}'
+    summary = '@highlight\n\n' + '\n\n@highlight\n\n'.join(j["target"])
 
     j["paper_id"] = str(j["paper_id"]).replace('/', '')
 

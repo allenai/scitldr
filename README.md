@@ -6,7 +6,7 @@ This repository contains the dataset, model weights, and generation code for our
 A running demo of our model can be found [here](https://scitldr.apps.allenai.org).
 
 ## Dataset
-SciTLDR is split in to a 60/20/20 train/dev/test split. For the `test.jsonl` files, each line is a json, formatted as follows
+SciTLDR is split in to a 60/20/20 train/dev/test split. For each file, each line is a json, formatted as follows
 
 ```
 {
@@ -21,7 +21,7 @@ SciTLDR is split in to a 60/20/20 train/dev/test split. For the `test.jsonl` fil
    "paper_id":"PAPER-ID",
    "target":[
      "author-tldr",
-      "pr-tldr0",
+      "pr-tldr0", 
       "pr-tldr1",
       ... 
    ],
@@ -30,18 +30,37 @@ SciTLDR is split in to a 60/20/20 train/dev/test split. For the `test.jsonl` fil
 ```
 The keys `rouge_scores` and `source_labels` are not necessary for any code to run, but we provide precomputed Rouge scores to encourage future research. 
 
-The train and dev files have the same format, but the value for `target` is a string, because those splits only have Author-TLDRs.
-
 ## Requirements
-We use [Fairseq](https://fairseq.readthedocs.io) to train and evaluate our models. To install all requirements, run `pip install -r requirements.txt`
+We use [Fairseq](https://fairseq.readthedocs.io) to train and evaluate our models. 
+Install Fairseq as follows:
+```bash
+git clone fairseq repo #TODO figure out how to use specific version
+cd fairseq
+pip install --editable .
+```
+
+To install all other requirements, run `pip install -r requirements.txt`
 
 For the evaluation, you will need `files2rouge`. 
-Please install [my fork](https://github.com/isabelcachola/files2rouge) of the repo.
+Please follow the installation instructions [here](https://github.com/pltrdy/files2rouge).
 
 ### Model Weights
-[`bart.large.xsum.multitask-A`](https://storage.cloud.google.com/skiff-models/scitldr/ao_model.pt)
+[`catts.tldr-ao`](https://storage.cloud.google.com/skiff-models/scitldr/catts.tldr-ao.pt)
 
-[`bart.large.xsum.multitask-AIC`](https://storage.cloud.google.com/skiff-models/scitldr/aic_model.pt)
+[`catts.tldr-aic`](https://storage.cloud.google.com/skiff-models/scitldr/catts.tldr-aic.pt)
+
+[`catts-xsum.tldr-ao`](https://storage.cloud.google.com/skiff-models/scitldr/catts-xsum.tldr-ao.pt)
+
+[`catts-xsum.tldr-aic`](https://storage.cloud.google.com/skiff-models/scitldr/catts-xsum.tldr-aic.pt)
+
+[`bart.tldr-ao`](https://storage.cloud.google.com/skiff-models/scitldr/bart.tldr-ao.pt)
+
+[`bart.tldr-aic`](https://storage.cloud.google.com/skiff-models/scitldr/bart.tldr-aic.pt)
+
+[`bart-xsum.tldr-ao`](https://storage.cloud.google.com/skiff-models/scitldr/bart-xsum.tldr-ao.pt)
+
+[`bart-xsum.tldr-aic`](https://storage.cloud.google.com/skiff-models/scitldr/bart-xsum.tldr-aic.pt)
+
 
 ### Data Preprocessing
 In order to format the data to work for the Fairseq library, run:
@@ -53,19 +72,20 @@ chmod +x make_datafiles.sh
 ```
 `$TASK/ctrl` contains the dataset formatted with the control codes.
 
-### Evaluation
-This code takes in a `test.source` file, in which each line is an input and outputs a `test.hypo` file with the predictions. It imports a `test.jsonl` file as a reference and stores the rouge score in `test.hypo.score`.
+### Generation
+This code takes in a `test.source` file, in which each line is an input and outputs a `test.hypo` file with the predictions. See [decoder_params](decoder_params.md) for optimal decoder parameters for each version of the model.
 ```bash
-python evaluate.py SciTLDR-Data/SciTLDR-A/ctrl /path/to/model/dir/ --checkpoint_file scitldr_ao_model.pt --beam 4 --lenpen 0.2
+python scripts/generate.py /path/to/modeldir/ SciTLDR-Data/SciTLDR-A/ctrl ./ --beam 2 --lenpen 0.4 --test_fname test.hypo
 ```
-OR
-```bas
-python evaluate.py SciTLDR-Data/SciTLDR-AIC/ctrl /path/to/model/dir/ --checkpoint_file scitldr_aic_model.pt --beam 2 --lenpen 0.2 
+
+### Evaluation
+This script is a wrapper around ROUGE that takes in a `test.hypo` file and compares to a `test.jsonl` file.
+```bash
+python scripts/cal-rouge.py /path/to/test.hypo SciTLDR-Data/SciTLDR-A/test.jsonl --workers 1
 ```
 
 ### Citing
 If you use our code, dataset, or model weights in your research, please cite "TLDR: Extreme Summarization of Scientific Documents."
-
 
 ```
 @article{cachola2020tldr,

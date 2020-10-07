@@ -2,6 +2,8 @@
 *.target
 *.source
 SciTLDR-Data/SciTLDR-*-bin/
+SciTLDR-Data/SciTLDR-*/ctrl-bin/
+SciTLDR-Data/SciTLDR-*/ctrl/
 SciTLDR-Data/SciTLDR-*/mapping/
 SciTLDR-Data/SciTLDR-*/stories/
 
