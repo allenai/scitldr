@@ -20,6 +20,7 @@ import glob
 import pathlib
 import re
 from multiprocessing.pool import Pool
+from pathlib import Path
 
 
 def filter_rouge(output_string):
@@ -64,13 +65,14 @@ def _get_rouge(pred, data):
             fh.write(pred.strip())
         if not isinstance(data['target'], list):  # handle single target
             data['target'] = [data['target']]    
+        log_file = os.path.join(td, 'rouge.log')
         for i, gold_tldr in enumerate(data['target']):
             gold_file = os.path.join(td, 'gold')
             with open(gold_file, 'w') as fh:
                 fh.write(gold_tldr.strip())
-            rouge_score = files2rouge.run(cand_file, gold_file, ignore_empty=True)
+            files2rouge.run(cand_file, gold_file, ignore_empty=True, saveto=log_file)
+            rouge_score = Path(log_file).read_text()
             rouge_score = filter_rouge(rouge_score)
-            # import ipdb; ipdb.set_trace()
             if max_curr_rouge < rouge_score['rouge-1']:
                 curr_rouge = rouge_score
                 max_curr_rouge = rouge_score['rouge-1']
