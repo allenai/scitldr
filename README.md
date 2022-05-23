@@ -2,9 +2,6 @@
 
 This repository contains the dataset, model weights, and generation code for our paper "[TLDR: Extreme Summarization of Scientific Documents](https://arxiv.org/abs/2004.15011)". 
 
-## Demo
-A running demo of our model can be found [here](https://scitldr.apps.allenai.org).
-
 ## Dataset
 SciTLDR is split in to a 60/20/20 train/dev/test split. For each file, each line is a json, formatted as follows
 
