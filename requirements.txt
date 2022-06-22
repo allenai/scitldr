@@ -3,7 +3,7 @@ torch==1.4.0
 tqdm==4.31.1
 cffi==1.14.0
 Cython==0.29.15
-numpy==1.16.4
+numpy==1.22.0
 regex==2020.1.8
 requests==2.22.0
 pysbd==0.1.4
